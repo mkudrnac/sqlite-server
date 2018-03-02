@@ -39,4 +39,4 @@ private:
     boost::asio::ip::tcp::socket   m_socket;
 };
 
-#endif /* AsioListenSocket_h */
+#endif /* SQLITE_SERVER_LISTENSOCKET_H */

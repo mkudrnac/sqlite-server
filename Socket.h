@@ -50,4 +50,4 @@ protected:
     boost::asio::ip::tcp::socket   m_socket;
 };
 
-#endif /* AsioSocket_h */
+#endif /* SQLITE_SERVER_SOCKET_H */
