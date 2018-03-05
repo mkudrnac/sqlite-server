@@ -5,14 +5,14 @@
 #include <boost/regex.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
-#include <iostream>
+#include <fmt/printf.h>
 #include "sqlite3/sqlite3.h"
 #include "RequestHandler.h"
 
 using json = nlohmann::json;
 
 //TODO: config
-const auto databases_folder = "/Users/miroslavkudrnac/SVN/";
+const auto databases_folder = "C:\\Users\\Mira\\Documents\\";
 
 enum GenericErrorCode
 {
@@ -22,31 +22,36 @@ enum GenericErrorCode
     NO_DATABASE_SPECIFIED
 };
 
-RequestHandler::RequestHandler()
+RequestHandler::RequestHandler() : 
+	m_map{
+		{"QUERY", boost::bind(&RequestHandler::handle_query, this, _1)},
+		{"LIST", boost::bind(&RequestHandler::handle_list, this, _1)},
+		{"DELETE_DB", boost::bind(&RequestHandler::handle_delete_db, this, _1)}
+	}
 {
-    m_map["QUERY"] = boost::bind(&RequestHandler::handle_query, this, _1);
-    m_map["LIST"] = boost::bind(&RequestHandler::handle_list, this, _1);
-    m_map["DELETE_DB"] = boost::bind(&RequestHandler::handle_delete_db, this, _1);
+
 }
 
-const Response RequestHandler::handle_request(const std::string& req)
+std::unique_ptr<IResponse> RequestHandler::handle_request(const std::string& req)
 {
+	fmt::print("Request: {}\n", req);
+
     json j;
     try {
         j = parse_request(req);
-    }catch(nlohmann::detail::parse_error& ex) {
-        return Response({{"generic_error", INVALID_FORMAT}, {"request", req}});
+    }catch(nlohmann::detail::parse_error& e) {
+		return std::make_unique<Response>(json{{"generic_error", INVALID_FORMAT}, {"message", e.what()}, {"request", req}});
     }
 
     if(j.find("cmd") == j.end())
     {
-        return Response({{"generic_error", NO_COMMAND_SPECIFIED}, {"request", req}});
+        return std::make_unique<Response>(json{{"generic_error", NO_COMMAND_SPECIFIED}, {"request", req}});
     }
 
     const auto handler = m_map.find(j["cmd"]);
     if(handler == m_map.end())
     {
-        return Response({{"generic_error", UNKNOWN_COMMAND}, {"request", req}});
+        return std::make_unique<Response>(json{{"generic_error", UNKNOWN_COMMAND}, {"request", req}});
     }
     return handler->second(j);
 }
@@ -56,7 +61,7 @@ const json RequestHandler::parse_request(const std::string& req)
     json j;
     try {
         j = json::parse(req);
-    }catch(nlohmann::detail::parse_error& ex) {
+    }catch(nlohmann::detail::parse_error&) {
         //fix JSON - there is error in SQLiteStudio {cmd:"LIST"}
         std::string result;
         boost::regex e("(['\"])?([a-zA-Z0-9]+)(['\"])?:");
@@ -66,11 +71,11 @@ const json RequestHandler::parse_request(const std::string& req)
     return j;
 }
 
-const Response RequestHandler::handle_query(const nlohmann::json& j)
+std::unique_ptr<IResponse> RequestHandler::handle_query(const nlohmann::json& j)
 {
     if(j.find("db") == j.end())
     {
-        return Response({{"generic_error", NO_DATABASE_SPECIFIED}, {"request", j}});
+        return std::make_unique<Response>(json{{"generic_error", NO_DATABASE_SPECIFIED}, {"request", j}});
     }
 
     const std::string database = j["db"];
@@ -81,7 +86,7 @@ const Response RequestHandler::handle_query(const nlohmann::json& j)
     int rc = sqlite3_open(databasePath.c_str(), &db);
     if(rc != SQLITE_OK)
     {
-        return Response({{"error_code", sqlite3_errcode(db)}, {"error_message", sqlite3_errmsg(db)}, {"query", j}});
+        return std::make_unique<Response>(json{{"error_code", sqlite3_errcode(db)}, {"error_message", sqlite3_errmsg(db)}, {"query", j}});
     }
     else
     {
@@ -91,7 +96,7 @@ const Response RequestHandler::handle_query(const nlohmann::json& j)
         }while(rc == SQLITE_BUSY);
         if(rc != SQLITE_OK)
         {
-            return Response({{"error_code", sqlite3_errcode(db)}, {"error_message", sqlite3_errmsg(db)}, {"query", j}});
+            return std::make_unique<Response>(json{{"error_code", sqlite3_errcode(db)}, {"error_message", sqlite3_errmsg(db)}, {"query", j}});
         }
         else
         {
@@ -157,12 +162,12 @@ const Response RequestHandler::handle_query(const nlohmann::json& j)
             sqlite3_finalize(stmt);
             sqlite3_close(db);
 
-            return Response({{"columns", columnNames}, {"data", rowsData}});
+            return std::make_unique<Response>(json{{"columns", columnNames}, {"data", rowsData}});
         }
     }
 }
 
-const Response RequestHandler::handle_list(const nlohmann::json& j)
+std::unique_ptr<IResponse> RequestHandler::handle_list(const nlohmann::json& j)
 {
     auto databases = json::array();
     if(boost::filesystem::is_directory(databases_folder))
@@ -176,18 +181,18 @@ const Response RequestHandler::handle_list(const nlohmann::json& j)
             }
         }
     }
-    return Response({{"list", databases}});
+	return std::make_unique<Response>(json{{"list", databases}});
 }
 
-const Response RequestHandler::handle_delete_db(const nlohmann::json& j)
+std::unique_ptr<IResponse> RequestHandler::handle_delete_db(const nlohmann::json& j)
 {
     if(j.find("db") == j.end())
     {
-        return Response({{"generic_error", NO_DATABASE_SPECIFIED}, {"request", j}});
+        return std::make_unique<Response>(json{{"generic_error", NO_DATABASE_SPECIFIED}, {"request", j}});
     }
 
     const std::string database = j["db"];
     const auto databasePath = std::string(databases_folder) + database;
     const auto result = boost::filesystem::remove(databasePath);
-    return Response({{"result", result ? "ok" : "error"}});
+	return std::make_unique<Response>(json{{"result", result ? "ok" : "error"}});
 }

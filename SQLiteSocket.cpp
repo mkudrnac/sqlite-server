@@ -2,13 +2,15 @@
 // Created by Miroslav Kudrnac on 02/03/2018.
 //
 
+#include <fmt/printf.h>
+#include "RequestHandler.h"
 #include "SQLiteSocket.h"
-#include <regex>
 
 SQLiteSocket::SQLiteSocket(boost::asio::io_service& service,
                            boost::asio::ip::tcp::socket socket) :
-        Socket(service, std::move(socket)),
-        m_packet_size(0)
+	Socket(service, std::move(socket)),
+	m_packet_size(0),
+	m_handler(std::make_unique<RequestHandler>())
 {
 
 }
@@ -35,7 +37,7 @@ void SQLiteSocket::do_read()
             boost::asio::async_read(m_socket, boost::asio::buffer(m_request), [this, self](boost::system::error_code ec, std::size_t length) {
                 if(!ec)
                 {
-                    send_response(m_handler.handle_request(m_request));
+                    send_response(std::move(m_handler->handle_request(m_request)));
                     do_read();
                 }
             });
@@ -43,20 +45,20 @@ void SQLiteSocket::do_read()
     });
 }
 
-void SQLiteSocket::send_response(const Response& response)
+void SQLiteSocket::send_response(std::unique_ptr<IResponse> response)
 {
     const auto write_in_progress = !m_out_packets.empty();
-    m_out_packets.push(response);
+    m_out_packets.emplace(std::move(response));
     if(!write_in_progress)
     {
         do_write(m_out_packets.front());
     }
 }
 
-void SQLiteSocket::do_write(const Response& response)
+void SQLiteSocket::do_write(const std::unique_ptr<IResponse>& response)
 {
     auto self(shared_from_this());
-    boost::asio::async_write(m_socket, boost::asio::buffer(response.data()), [this, self](boost::system::error_code ec, std::size_t length)
+    boost::asio::async_write(m_socket, boost::asio::buffer(response->data()), [this, self](boost::system::error_code ec, std::size_t length)
     {
         if(!ec)
         {

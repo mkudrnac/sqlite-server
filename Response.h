@@ -5,19 +5,19 @@
 #ifndef SQLITE_SERVER_RESPONSE_H
 #define SQLITE_SERVER_RESPONSE_H
 
-#include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "IResponse.h"
 
-class Response final
+class Response final : public IResponse
 {
     using HeaderSize = uint32_t;
-    using ResponseData = std::vector<uint8_t>;
 
 public:
     explicit Response(const nlohmann::json& json);
 
-    inline const ResponseData& data() const
+	//MARK: IResponse
+    inline const ResponseData& data() const override
     {
         return m_data;
     }
@@ -27,4 +27,4 @@ private:
 };
 
 
-#endif //SQLITE_SERVER_RESPONSE_H
+#endif

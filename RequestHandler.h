@@ -10,24 +10,26 @@
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 #include "Response.h"
+#include "IRequestHandler.h"
 
-class RequestHandler final
+class RequestHandler final : public IRequestHandler
 {
 public:
     RequestHandler();
 
-    const Response handle_request(const std::string& req);
+	//MARK: IRequestHandler
+    std::unique_ptr<IResponse> handle_request(const std::string& req);
 
 private:
     const nlohmann::json parse_request(const std::string& req);
 
     //handlers
-    const Response handle_query(const nlohmann::json&);
-    const Response handle_list(const nlohmann::json&);
-    const Response handle_delete_db(const nlohmann::json&);
+    std::unique_ptr<IResponse> handle_query(const nlohmann::json& j);
+    std::unique_ptr<IResponse> handle_list(const nlohmann::json& j);
+    std::unique_ptr<IResponse> handle_delete_db(const nlohmann::json& j);
 
 private:
-    std::map<std::string, boost::function<const Response(const nlohmann::json&)>> m_map;
+    const std::map<std::string, boost::function<std::unique_ptr<IResponse>(const nlohmann::json&)>> m_map;
 };
 
 
