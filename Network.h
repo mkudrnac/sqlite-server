@@ -14,15 +14,15 @@ template<class T>
 class NetworkWorker final
 {
 public:
-    explicit NetworkWorker(const uint16_t listenPort, const uint16_t threads = 1) :
-            m_listenPort(listenPort),
+    explicit NetworkWorker(const uint16_t listen_port, const uint16_t threads = 1) :
+            m_listen_port(listen_port),
             m_threads(threads)
     {
     }
     
     void run()
     {
-        ListenSocket<T> listenSocket(m_service, m_listenPort);
+        ListenSocket<T> listenSocket(m_service, m_listen_port);
         boost::thread_group thread_pool;
         for(uint16_t i = 0;i < m_threads;++i)
         {
@@ -38,7 +38,7 @@ public:
     
 private:
     boost::asio::io_service m_service;
-    const uint16_t          m_listenPort;
+    const uint16_t          m_listen_port;
     const uint16_t          m_threads;
 };
 

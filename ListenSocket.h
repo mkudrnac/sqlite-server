@@ -11,9 +11,9 @@ template <class T>
 class ListenSocket final
 {
 public:
-    explicit ListenSocket(boost::asio::io_service& service, unsigned short listenPort) :
+    explicit ListenSocket(boost::asio::io_service& service, unsigned short listen_port) :
             m_service(service),
-            m_acceptor(service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), listenPort)),
+            m_acceptor(service, boost::asio::ip::tcp::endpoint(boost::asio::ip::tcp::v4(), listen_port)),
             m_socket(service)
     {
         do_accept();
@@ -33,9 +33,9 @@ private:
 
             if(!ec)
             {
-                std::make_shared<T>(m_service, std::move(m_socket))->OnRead();
+                std::make_shared<T>(m_service, std::move(m_socket))->do_read();
             }
-            
+
             do_accept();
         });
     }

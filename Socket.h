@@ -7,6 +7,7 @@
 
 #include <memory>
 #include <boost/asio.hpp>
+#include <fmt/printf.h>
 
 class Socket : public std::enable_shared_from_this<Socket>
 {
@@ -19,31 +20,7 @@ public:
         m_socket.set_option(boost::asio::ip::tcp::no_delay(true));
     }
     
-    virtual void OnRead() = 0;
-    
-    void Disconnect()
-    {
-        auto self(shared_from_this());
-        m_service.post([this, self](){
-            try
-            {
-                if(m_socket.is_open())
-                {
-                    m_socket.shutdown(boost::asio::ip::tcp::socket::shutdown_both);
-                    m_socket.close();
-                }
-            }
-            catch(boost::system::system_error& error)
-            {
-                //TODO: log
-            }
-        });
-    }
-    
-    const std::string GetRemoteIP() const
-    {
-        return m_socket.remote_endpoint().address().to_string();
-    }
+    virtual void do_read() = 0;
     
 protected:
     boost::asio::io_service&       m_service;
