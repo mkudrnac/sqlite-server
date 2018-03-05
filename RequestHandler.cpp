@@ -6,7 +6,7 @@
 #include <boost/filesystem.hpp>
 #include <boost/range/iterator_range.hpp>
 #include <iostream>
-#include "sqlite3.h"
+#include "sqlite3/sqlite3.h"
 #include "RequestHandler.h"
 
 using json = nlohmann::json;

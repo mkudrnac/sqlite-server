@@ -7,13 +7,11 @@
 
 #include <queue>
 #include "Socket.h"
-#include "sqlite3.h"
 #include "RequestHandler.h"
 
 class SQLiteSocket final : public Socket
 {
     using OutPackets = std::queue<Response>;
-    using OpenDatabases = std::map<std::string, sqlite3*>;
 
 public:
     explicit SQLiteSocket(boost::asio::io_service& service, boost::asio::ip::tcp::socket socket);
@@ -30,7 +28,6 @@ private:
     std::string     m_request;
     RequestHandler  m_handler;
     OutPackets      m_out_packets;
-    OpenDatabases   m_databases;
 };
 
 

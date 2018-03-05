@@ -18,7 +18,20 @@ find_package(nlohmann_json CONFIG REQUIRED)
 hunter_add_package(fmt)
 find_package(fmt CONFIG REQUIRED)
 
-add_executable(sqlite_server main.cpp ListenSocket.h Network.h Socket.h SQLiteSocket.cpp SQLiteSocket.h sqlite3/sqlite3.c RequestHandler.cpp RequestHandler.h Response.cpp Response.h)
+add_executable(sqlite_server
+        main.cpp
+        ListenSocket.h
+        Network.h
+        Socket.h
+        SQLiteSocket.cpp
+        SQLiteSocket.h
+        sqlite3/sqlite3.c
+        sqlite3/sqlite3.h
+        sqlite3/sqlite3ext.h
+        RequestHandler.cpp
+        RequestHandler.h
+        Response.cpp
+        Response.h)
 target_link_libraries(sqlite_server PUBLIC nlohmann_json fmt::fmt-header-only Boost::system Boost::regex Boost::filesystem Boost::thread)
 if(WIN32)
     target_link_libraries(sqlite_server PUBLIC wsock32 ws2_32)
