@@ -1,5 +1,4 @@
 cmake_minimum_required(VERSION 3.9)
-cmake_policy(SET CMP0054 OLD)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
@@ -21,3 +20,6 @@ find_package(fmt CONFIG REQUIRED)
 
 add_executable(sqlite_server main.cpp ListenSocket.h Network.h Socket.h SQLiteSocket.cpp SQLiteSocket.h)
 target_link_libraries(sqlite_server PUBLIC nlohmann_json fmt::fmt-header-only Boost::regex Boost::system Boost::filesystem Boost::thread)
+if(WIN32)
+    target_link_libraries(sqlite_server PUBLIC wsock32 ws2_32)
+endif()

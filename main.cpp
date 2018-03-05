@@ -14,7 +14,7 @@ namespace {
 int main()
 {
     //register shutdown signal
-    std::signal(SIGINT, signal_handler);
+    signal(SIGINT, signal_handler);
 
     //open sqlite socket and run forever
     auto sqliteSocketWorker = std::make_unique<NetworkWorker<SQLiteSocket>>(3333, 4);
