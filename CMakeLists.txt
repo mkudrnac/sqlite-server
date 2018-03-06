@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.5)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
@@ -49,7 +49,8 @@ target_link_libraries(sqlite_server PUBLIC
 		Boost::regex
 		Boost::filesystem
 		Boost::thread
-		Boost::program_options)
+		Boost::program_options
+		${CMAKE_DL_LIBS})
 if(WIN32)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
     target_link_libraries(sqlite_server PUBLIC wsock32 ws2_32)
