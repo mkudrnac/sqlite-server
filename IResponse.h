@@ -12,6 +12,7 @@ protected:
 
 public:
 	virtual const ResponseData& data() const = 0;
+    virtual const std::string data_repr() const { return ""; };
 };
 
 #endif
