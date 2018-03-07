@@ -51,7 +51,7 @@ void SQLiteSocket::send_response(std::unique_ptr<IResponse> response)
 {
     Log.debug("Response - {}\n", response->data_repr());
     const auto write_in_progress = !m_out_packets.empty();
-    m_out_packets.emplace(std::move(response));
+    m_out_packets.push(std::move(response));
     if(!write_in_progress)
     {
         do_write(m_out_packets.front());

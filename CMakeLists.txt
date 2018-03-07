@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.9)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
@@ -10,6 +10,12 @@ project(sqlite_server)
 
 set(CMAKE_CXX_STANDARD 14)
 set(Boost_USE_MULTITHREADED ON)
+
+include(CheckIPOSupported)
+check_ipo_supported(RESULT ipo_supported OUTPUT error)
+if(ipo_supported)
+	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
+endif()
 
 hunter_add_package(Boost COMPONENTS system regex filesystem thread program_options)
 find_package(Boost CONFIG REQUIRED system regex filesystem thread program_options)

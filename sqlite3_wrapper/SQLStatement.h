@@ -26,6 +26,7 @@ public:
 
 	~SQLStatement()
 	{
+		sqlite3_clear_bindings(m_stmt);
 		sqlite3_finalize(m_stmt);
 	}
 
