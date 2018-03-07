@@ -9,7 +9,7 @@
 #include <nlohmann/json.hpp>
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
-#include "sqlite3_wrapper\SQLDatabase.h"
+#include "sqlite3_wrapper/SQLDatabase.h"
 #include "Response.h"
 #include "IRequestHandler.h"
 
