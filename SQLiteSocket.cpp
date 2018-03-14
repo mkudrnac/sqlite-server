@@ -39,7 +39,7 @@ void SQLiteSocket::do_read()
                 if(!ec)
                 {
                     Log.debug("Request - {}\n", m_request);
-                    send_response(std::move(m_handler->handle_request(m_request)));
+                    send_response(m_handler->handle_request(m_request));
                     do_read();
                 }
             });
