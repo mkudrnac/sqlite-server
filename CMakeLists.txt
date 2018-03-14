@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.9)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-        URL "https://github.com/ruslo/hunter/archive/v0.20.13.tar.gz"
+        URL "https://github.com/ruslo/hunter/archive/v0.20.19.tar.gz"
         SHA1 "d92042d6e22522516183b86da10e56fb1af73f7a"
 )
 
@@ -17,9 +17,6 @@ if(ipo_supported)
 	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
-hunter_add_package(sqlite3)
-find_package(sqlite3 CONFIG REQUIRED)
-
 hunter_add_package(Boost COMPONENTS system regex filesystem thread program_options)
 find_package(Boost CONFIG REQUIRED system regex filesystem thread program_options)
 
@@ -28,6 +25,9 @@ find_package(nlohmann_json CONFIG REQUIRED)
 
 hunter_add_package(fmt)
 find_package(fmt CONFIG REQUIRED)
+
+hunter_add_package(sqlite3)
+find_package(sqlite3 CONFIG REQUIRED)
 
 add_executable(sqlite_server
         main.cpp
@@ -49,14 +49,14 @@ add_executable(sqlite_server
 		Config.h
         Logger.h)
 target_link_libraries(sqlite_server PUBLIC
-        sqlite3
-		nlohmann_json
-		fmt::fmt-header-only
 		Boost::system
 		Boost::regex
 		Boost::filesystem
 		Boost::thread
 		Boost::program_options
+        nlohmann_json
+        fmt::fmt-header-only
+        sqlite3
 		${CMAKE_DL_LIBS})
 if(WIN32)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
