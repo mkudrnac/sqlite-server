@@ -56,7 +56,7 @@ target_link_libraries(sqlite_server PUBLIC
 		Boost::program_options
         nlohmann_json
         fmt::fmt-header-only
-        sqlite3
+        sqlite3::sqlite3
 		${CMAKE_DL_LIBS})
 if(WIN32)
 	add_definitions(-DWIN32_LEAN_AND_MEAN)
