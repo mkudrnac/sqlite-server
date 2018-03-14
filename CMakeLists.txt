@@ -17,6 +17,9 @@ if(ipo_supported)
 	set(CMAKE_INTERPROCEDURAL_OPTIMIZATION TRUE)
 endif()
 
+hunter_add_package(sqlite3)
+find_package(sqlite3 CONFIG REQUIRED)
+
 hunter_add_package(Boost COMPONENTS system regex filesystem thread program_options)
 find_package(Boost CONFIG REQUIRED system regex filesystem thread program_options)
 
@@ -33,9 +36,6 @@ add_executable(sqlite_server
         Socket.h
         SQLiteSocket.cpp
         SQLiteSocket.h
-        sqlite3/sqlite3.c
-        sqlite3/sqlite3.h
-        sqlite3/sqlite3ext.h
         RequestHandler.cpp
         RequestHandler.h
         Response.cpp
@@ -49,6 +49,7 @@ add_executable(sqlite_server
 		Config.h
         Logger.h)
 target_link_libraries(sqlite_server PUBLIC
+        sqlite3
 		nlohmann_json
 		fmt::fmt-header-only
 		Boost::system
