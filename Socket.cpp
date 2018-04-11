@@ -2,7 +2,7 @@
 // Created by Miroslav Kudrnac on 11/04/2018.
 //
 
-#import "Socket.h"
+#include "Socket.h"
 #include "Logger.h"
 
 Socket::Socket(boost::asio::io_service& service, boost::asio::ip::tcp::socket socket) :
