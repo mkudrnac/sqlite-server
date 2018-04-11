@@ -50,6 +50,7 @@ add_executable(sqlite3-server
         main.cpp
         ListenSocket.h
         Network.h
+		Socket.cpp
         Socket.h
         SQLiteSocket.cpp
         SQLiteSocket.h
