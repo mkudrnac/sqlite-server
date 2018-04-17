@@ -15,7 +15,7 @@ public:
 	{
 	}
 
-	inline const auto code() const                      { return m_code; }
+	inline const auto code() const noexcept             { return m_code; }
     inline const char* what() const noexcept override   { return m_what.c_str(); }
 
 private:
