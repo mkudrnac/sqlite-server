@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-        URL "https://github.com/ruslo/hunter/archive/v0.20.19.tar.gz"
-        SHA1 "f22d712b57ed3b89e661a7ef311814aa3c424a66"
+		URL "https://github.com/ruslo/hunter/archive/v0.20.43.tar.gz"
+		SHA1 "2e7546c3f5ced1c3e95cdc02cafee2a1c8b98b25"
 )
 
 project(sqlite3-server)
