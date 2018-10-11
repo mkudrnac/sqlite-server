@@ -72,7 +72,7 @@ target_link_libraries(sqlite3-server PUBLIC
 		Boost::filesystem
 		Boost::thread
 		Boost::program_options
-		nlohmann_json::nlohmann_json
+		nlohmann_json
         fmt::fmt-header-only
 		${CMAKE_DL_LIBS})
 if(WIN32)
