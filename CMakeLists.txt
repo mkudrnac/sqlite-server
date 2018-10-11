@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 3.9)
 
 include("cmake/HunterGate.cmake")
 HunterGate(
-		URL "https://github.com/ruslo/hunter/archive/v0.23.27.tar.gz"
-		SHA1 "70d75a25f895df3da00d8382417e8c2a08c93173"
+	URL "https://github.com/ruslo/hunter/archive/v0.23.33.tar.gz"
+	SHA1 "acbf4b9b77b5a0160adc1da1cdda35f64b14196a"
 )
 
 project(sqlite3-server)
@@ -72,7 +72,7 @@ target_link_libraries(sqlite3-server PUBLIC
 		Boost::filesystem
 		Boost::thread
 		Boost::program_options
-        nlohmann_json
+		nlohmann_json::nlohmann_json
         fmt::fmt-header-only
 		${CMAKE_DL_LIBS})
 if(WIN32)
